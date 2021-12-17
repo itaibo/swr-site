@@ -12,21 +12,21 @@ Así es como funciona:
 
 - A continuación, se obtienen los datos en el lado del cliente y se muestran cuando están listos.
 
-Este enfoque funciona bien, por ejemplo, para páginas que son dashboard. Dado que un dashboard es una página privada y específica del usuario, el SEO no es relevante y la página no necesita ser pre-renderizado. Los datos se actualizan con frecuencia, lo que requiere la obtención de datos en el momento de la solicitud.
+Este enfoque funciona bien, por ejemplo, para páginas que son dashboard. Dado que un dashboard es una página privada y específica del usuario, el SEO no es relevante y la página no necesita ser pre-renderizada. Los datos se actualizan con frecuencia, lo que requiere la obtención de datos en el momento de la solicitud.
 
-## Pre-rendering with Default Data
+## Pre-renderizado con datos por defecto
 
-If the page must be pre-rendered, Next.js supports [2 forms of pre-rendering](https://nextjs.org/docs/basic-features/data-fetching):  
-**Static Generation (SSG)** and **Server-side Rendering (SSR)**.
+Si la página debe ser pre-renderizada, Next.js soporta [2 formas de pre-renderizado](https://nextjs.org/docs/basic-features/data-fetching):   
+**Static Generation (SSG)** y **Server-side Rendering (SSR)**.
 
-Together with SWR, you can pre-render the page for SEO, and also have features such as caching, revalidation, focus tracking, refetching on interval on the client side.
+Junto con SWR, usted puede pre-renderizar la página para SEO, y también tener funcionalidades como caché, revalidación, *focus tracking*, o *refetching* en el lado del cliente.
 
-You can use the `fallback` option of [`SWRConfig`](/docs/global-configuration) to pass the pre-fetched data as the initial value of all SWR hooks. 
-For example with `getStaticProps`:
+Puede usar la opción `fallback` de [`SWRConfig`](/docs/global-configuration) para pasar los datos obtenidos previamente como el valor inicial de todos los hooks de SWR.
+Por ejemplo con `getStaticProps`:
 
 ```jsx
  export async function getStaticProps () {
-  // `getStaticProps` is executed on the server side.
+  // `getStaticProps` se ejecuta en el lado del servidor
   const article = await getArticleFromAPI()
   return {
     props: {
@@ -38,13 +38,13 @@ For example with `getStaticProps`:
 }
 
 function Article() {
-  // `data` will always be available as it's in `fallback`.
+  // `data` siempre estará disponible como es en `fallback`
   const { data } = useSWR('/api/article', fetcher)
   return <h1>{data.title}</h1>
 }
 
 export default function Page({ fallback }) {
-  // SWR hooks inside the `SWRConfig` boundary will use those values.
+  // Los hooks de SWR dentro del límite de `SWRConfigp siempre usarán esos valores
   return (
     <SWRConfig value={{ fallback }}>
       <Article />
@@ -53,8 +53,8 @@ export default function Page({ fallback }) {
 }
 ```
 
-The page is still pre-rendered. It's SEO friendly, fast to response, but also fully powered by SWR on the client side. The data can be dynamic and self-updated over time.
+La página sigue estando pre-renderizada. Es buena para SEO, rápida en la respuesta, pero también totalmente impulsada por SWR en el lado del cliente. Los datos pueden ser dinámicos y auto-actualizados a lo largo del tiempo.
 
 <Callout emoji="💡">
-  The `Article` component will render the pre-generated data first, and after the page is hydrated, it will fetch the latest data again to keep it refresh.
+  El componente `Article` renderizará los datos pre-generados primero, y después de que la página se hidrate, obtendrá los últimos datos de nuevo para mantenerla actualizada.
 </Callout>
